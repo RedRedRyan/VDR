@@ -26,9 +26,6 @@ public class DistanceCalc : MonoBehaviour
         distanceText.text = "Distance: " + distance.ToString("F2") + " units";
         line.SetPosition(0, startCube.position);
         line.SetPosition(1, endCube.position);
-
-        
-        // bgroundImage(setActive: true);
     }
     
 
