@@ -5,43 +5,85 @@ using System;
 
 public class DataLogger : MonoBehaviour
 {
+    private static DataLogger instance;
     private string filePath;
-    private StreamWriter writer;
     private string playerName;
-    private DateTime startTime;
+    private DateTime sessionStartTime;
     private List<float> journeyTimes = new List<float>();
-    private int currentCheckpoint = 0;
+    private float lastCheckpointTime;
 
-    void Start()
+    void Awake()
     {
-        // Initialize CSV file (create if it doesn't exist)
-        filePath = Application.dataPath + "/PlayerJourneyData.csv";
-        if (!File.Exists(filePath))
+        // Singleton pattern to prevent duplicates
+        if (instance == null)
         {
-            writer = new StreamWriter(filePath, true);
-            writer.WriteLine("PlayerName,Date,CheckpointJourney,TimeTaken(s)");
-            writer.Close();
+            instance = this;
+            DontDestroyOnLoad(gameObject);
+            InitializeLogger();
+        }
+        else
+        {
+            Destroy(gameObject);
         }
     }
 
-    // Call this method from a UI input field to set the player name
-    public void SetPlayerName(string name)
+    void InitializeLogger()
     {
-        playerName = name;
-        startTime = DateTime.Now; // Record session start time
+        filePath = Path.Combine(Application.persistentDataPath, "PlayerJourneyData.csv");
+        
+        // Initialize CSV with headers if file doesn't exist
+        if (!File.Exists(filePath))
+        {
+            using (StreamWriter writer = new StreamWriter(filePath, true))
+            {
+                writer.WriteLine("PlayerName,SessionStart,CheckpointJourney,JourneyTime(s),TotalTime(s),DateTime");
+            }
+        }
     }
 
-    // Call this when a checkpoint is reached
-    public void OnCheckpointReached(int checkpointID)
+    public void SetPlayerName(string name)
     {
-        float journeyTime = Time.timeSinceLevelLoad; // Time since scene start
+        if (!string.IsNullOrEmpty(name))
+        {
+            playerName = name;
+            sessionStartTime = DateTime.Now;
+            lastCheckpointTime = Time.timeSinceLevelLoad;
+            Debug.Log($"Player name set to: {playerName}");
+        }
+    }
+
+    public void LogCheckpoint(int checkpointID)
+    {
+        if (string.IsNullOrEmpty(playerName))
+        {
+            Debug.LogWarning("Cannot log checkpoint - player name not set!");
+            return;
+        }
+
+        float currentTime = Time.timeSinceLevelLoad;
+        float journeyTime = currentTime - lastCheckpointTime;
+        lastCheckpointTime = currentTime;
+
         journeyTimes.Add(journeyTime);
 
-        // Log data to CSV
-        writer = new StreamWriter(filePath, true);
-        writer.WriteLine($"{playerName},{DateTime.Now},Journey {checkpointID}-{checkpointID + 1},{journeyTime}");
-        writer.Close();
+        using (StreamWriter writer = new StreamWriter(filePath, true))
+        {
+            writer.WriteLine(
+                $"{playerName}," +
+                $"{sessionStartTime:yyyy-MM-dd HH:mm:ss}," +
+                $"Journey {checkpointID}-{checkpointID + 1}," +
+                $"{journeyTime:F2}," +
+                $"{currentTime:F2}," +
+                $"{DateTime.Now:yyyy-MM-dd HH:mm:ss}"
+            );
+        }
 
-        Debug.Log($"Checkpoint {checkpointID} reached! Time: {journeyTime}s");
+        Debug.Log($"Checkpoint {checkpointID} logged. Journey time: {journeyTime:F2}s");
+    }
+
+    // Helper method to get the CSV file path
+    public string GetDataFilePath()
+    {
+        return filePath;
     }
 }

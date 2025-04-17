@@ -1,28 +1,60 @@
 using UnityEngine;
-using System.Collections.Generic;
-using System.IO;
-using System;
 
 public class IDCheckpoint : MonoBehaviour
 {
-    public int checkpointID; // Assign in Inspector (0, 1, 2...)
+    [Tooltip("Assign unique checkpoint ID in Inspector")]
+    public int checkpointID;
+
+    [Header("Visual Feedback")]
+    [Tooltip("Enable to highlight next checkpoint")]
+    public bool enableVisualFeedback = true;
+    [Tooltip("Color to highlight next checkpoint")]
+    public Color highlightColor = Color.green;
 
     void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Player"))
-        {
-            DataLogger dataLogger = FindObjectOfType<DataLogger>();
-            if (dataLogger != null)
-            {
-                dataLogger.OnCheckpointReached(checkpointID);
-            }
+        if (!other.CompareTag("Player")) return;
 
-            // Light up the next checkpoint (optional visual feedback)
-            GameObject nextCheckpoint = GameObject.Find($"Checkpoint_{checkpointID + 1}");
-            if (nextCheckpoint != null)
+        // Log checkpoint data
+        DataLogger dataLogger = FindObjectOfType<DataLogger>();
+        if (dataLogger != null)
+        {
+            dataLogger.LogCheckpoint(checkpointID);
+        }
+        else
+        {
+            Debug.LogWarning("DataLogger not found in scene!");
+        }
+
+        // Visual feedback for next checkpoint
+        if (enableVisualFeedback)
+        {
+            HighlightNextCheckpoint();
+        }
+    }
+
+    private void HighlightNextCheckpoint()
+    {
+        GameObject nextCheckpoint = GameObject.Find($"Checkpoint_{checkpointID + 1}");
+        if (nextCheckpoint != null)
+        {
+            Renderer renderer = nextCheckpoint.GetComponent<Renderer>();
+            if (renderer != null)
             {
-                nextCheckpoint.GetComponent<Renderer>().material.color = Color.green;
+                renderer.material.color = highlightColor;
+            }
+            else
+            {
+                Debug.LogWarning($"No Renderer found on Checkpoint_{checkpointID + 1}");
             }
         }
+    }
+
+    // Optional: Draw gizmo in editor for better visualization
+    void OnDrawGizmos()
+    {
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawWireSphere(transform.position, 0.5f);
+        Gizmos.DrawIcon(transform.position + Vector3.up, "Checkpoint.png", true);
     }
 }
