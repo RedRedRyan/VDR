@@ -32,7 +32,7 @@ public class IDCheckpoint : MonoBehaviour
             HighlightNextCheckpoint();
         }
     }
-
+     //need updates
     private void HighlightNextCheckpoint()
     {
         GameObject nextCheckpoint = GameObject.Find($"Checkpoint_{checkpointID + 1}");

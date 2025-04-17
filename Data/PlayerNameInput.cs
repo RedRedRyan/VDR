@@ -1,10 +1,13 @@
 using UnityEngine;
 using UnityEngine.UI;
 
+// Input Name Scene attached to Game Manager
+
+
 public class PlayerNameInput : MonoBehaviour
 {
     public InputField nameInputField;
-    public GameObject drivingScene; // Reference to the scene to enable after input
+    public GameObject drivingScene; // Reference to the driving scene 
 
     public void OnSubmitName()
     {
