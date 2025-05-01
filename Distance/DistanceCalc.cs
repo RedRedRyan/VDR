@@ -5,31 +5,27 @@ public class DistanceCalc : MonoBehaviour
 {
     public Transform startCube; 
     public Transform endCube;
-
     public Image bgroundImage;  
     public Text distanceText;
     private LineRenderer line;    
 
     void Start()
-{
-    line = gameObject.AddComponent<LineRenderer>();
-    line.startWidth = 0.1f;
-    line.endWidth = 0.1f;
-    line.material = new Material(Shader.Find("Standard")) { color = Color.red };
-}
+    {
+        line = gameObject.AddComponent<LineRenderer>();
+        line.positionCount = 2; // Critical!
+        line.startWidth = 0.1f;
+        line.endWidth = 0.1f;
+        line.material = new Material(Shader.Find("Unlit/Color")) { color = Color.red };
+    }
+
     void Update()
     {
-        // Calculating The Euclidean distance between the cubes
-        float distance = Vector3.Distance(startCube.position, endCube.position);
+        if (!startCube || !endCube || !distanceText || !line) return;
 
-        // Update the UI Text to display the distance
-        distanceText.text = "Distance: " + distance.ToString("F2") + " units";
+        float distance = Vector3.Distance(startCube.position, endCube.position);
+        distanceText.text = $"Distance: {distance:F2} meters";
+        
         line.SetPosition(0, startCube.position);
         line.SetPosition(1, endCube.position);
     }
-    
-
-
-
-
 }

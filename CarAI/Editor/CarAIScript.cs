@@ -98,7 +98,7 @@ public class CarAIEditorScript : EditorWindow
         }
 
         GUILayout.Label("", EditorStyles.boldLabel);
-        GUILayout.Label("Check the file doc.pdf for documentation.", EditorStyles.boldLabel);
+        GUILayout.Label("Traffic System.", EditorStyles.boldLabel);
 
     }
 

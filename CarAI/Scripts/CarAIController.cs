@@ -71,10 +71,10 @@ public class CarAIController : MonoBehaviour
         WheelUpdate(rearRight, rearRightCollider);
         WheelUpdate(rearLeft, rearLeftCollider);
 
-        //Calculate speed
+        //Calculating speed
         CalculateKMH();
 
-        //Search for checkpoints
+        //Searching for checkpoints
 
         SearchForCheckpoints();
 
@@ -115,6 +115,9 @@ public class CarAIController : MonoBehaviour
         yield return null;
     }
 
+    /// <summary>
+    /// Checks if the car is flipped over.
+
     private bool isCarFlipedOver()
     {
 
@@ -125,28 +128,30 @@ public class CarAIController : MonoBehaviour
 
         return false;
     }
-
+    
+    /// <summary>
+    /// Updates the wheel position and rotation.
+    /// Using Quaternions for smooth animation and realistic suspension.
     private void WheelUpdate(Transform transform, WheelCollider collider)
     {
+        //Retrieves wheel position
         Vector3 pos;
+        //Retrieves wheel rotation
         Quaternion rot;
         collider.GetWorldPose(out pos, out rot);
+        //Sets the wheel position and rotation
         transform.position = pos;
         transform.rotation = rot;
     }
 
-    /// <summary>
     /// Accelerates the vehicle by the value given.
-    /// </summary>
     public void Accelerate(float value)
     {
         frontRightCollider.motorTorque = value;
         frontLeftCollider.motorTorque = value;
     }
-
-    /// <summary>
     /// Breaks the vehicle by the value given.
-    /// </summary>
+
     public void Break(float value)
     {
         frontRightCollider.brakeTorque = value;
@@ -155,15 +160,14 @@ public class CarAIController : MonoBehaviour
         rearLeftCollider.brakeTorque = value;
     }
 
-    /// <summary>
-    /// Turns the front wheels at the angle given.
-    /// </summary>
     public void Turn(float angle)
     {
         frontRightCollider.steerAngle = angle;
         frontLeftCollider.steerAngle = angle;
     }
 
+    /// <Summary>
+    /// Calculates the speed of the vehicle in km/h.
     private void CalculateKMH()
     {
         if(stopwatch.IsRunning)
@@ -172,7 +176,9 @@ public class CarAIController : MonoBehaviour
 
             float distance = (transform.position - lastPos).magnitude;
             float time = stopwatch.Elapsed.Milliseconds / (float)1000;
-
+            
+            ///Summary
+            ///Converts the distance from meters to kilometers and the time from seconds to hours.
             kmh = (int)(3600 * distance / time / 1000);
 
             lastPos = transform.position;
@@ -189,8 +195,7 @@ public class CarAIController : MonoBehaviour
     }
 
     /// <summary>
-    /// Sets the speed of the vehicle to the one given in the parameter.
-    /// </summary>
+    /// Sets the speed of the vehicle
     public void SetSpeed(int speedLimit)
     {
         if (kmh > speedLimit)
@@ -228,6 +233,8 @@ public class CarAIController : MonoBehaviour
             for(int i = 0; i < checks.Count; i++)
             {
                 checks[i].localRotation = Quaternion.Euler(-xangle, steerAngle, 0);
+                ///Summary
+                ///Checks if there is an object in front of the car using raycasting.
                 bool isObjectInFront = Physics.Raycast(checks[i].position, checks[i].forward, out carHit, maxDistance, seenLayers, QueryTriggerInteraction.Ignore);
 
                 #if UNITY_EDITOR
