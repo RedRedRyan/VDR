@@ -24,7 +24,6 @@ public class SpeedEnforcer : MonoBehaviour
         {
             startTime = Time.time;
             isTimerRunning = true;
-            Debug.Log("Timer started at Checkpoint A");
         }
         else if (other.transform == checkpointB && isTimerRunning)
         {
