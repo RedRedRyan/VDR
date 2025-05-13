@@ -3,7 +3,7 @@ using UnityEngine;
 public class PlayButton : MonoBehaviour
 {
     public GameObject pausePanel;
-    public GameObject gameplayUI;
+
 
     public void OnPlayButtonClicked()
     {
@@ -12,6 +12,5 @@ public class PlayButton : MonoBehaviour
         
         // Hide pause panel and show gameplay UI
         pausePanel.SetActive(false);
-        gameplayUI.SetActive(true);
     }
 }
