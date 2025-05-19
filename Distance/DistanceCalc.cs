@@ -1,12 +1,13 @@
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class DistanceCalc : MonoBehaviour
 {
     public Transform startCube; 
     public Transform endCube;
     public Image bgroundImage;  
-    public Text distanceText;
+    public TextMeshProUGUI distanceText;
     private LineRenderer line;    
 
     void Start()
