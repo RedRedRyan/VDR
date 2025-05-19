@@ -11,7 +11,7 @@ public void Pause()
 }
 public void  Home()
 {
-    SceneManager.LoadScene(1);
+    SceneManager.LoadScene(0);
     Time.timeScale = 1;
 }
 public void Resume()
